@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"name": "Nano_linefollowing",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"stm32-for-vscode.openOCDPath": false,
+		"stm32-for-vscode.makePath": false
+	}
+}

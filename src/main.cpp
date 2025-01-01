@@ -10,9 +10,9 @@ int run; //ISR change this value to make robot stop or not.
 
 //PID settings
 int error,prevError,P,I,D,PID;
-int Kp=25; //15
-int Kd=8; //5
-int Ki=1; //1
+float Kp = 8;  // 15
+float Kd = 35; // 5
+float Ki = 1;  // 1
 
 //offset values for driver
 const int offsetA = 1;
@@ -29,10 +29,11 @@ void haltProgram();
 void errorSet();
 void PIDset();
 void following();
+void turnBack();
 
 void setup() {
   Serial.begin(9600);
-  set_pins();
+  set_pins(); 
 
   pinMode(EXT_LED, OUTPUT);
 
@@ -58,6 +59,7 @@ void loop() {
     errorSet();
     PIDset();
     following();
+
     //forward(motor1,motor2);
   }else if(run == 0){
     brake(motor1,motor2);
@@ -79,11 +81,13 @@ void following(){
   //in this function motor speed will be corrected.
   int leftmotor = M_BASE_SPEED + PID;
   int rightmotor = M_BASE_SPEED - PID;
+
   motor1.drive(rightmotor);
   motor2.drive(leftmotor);
 }
 
-void errorSet(){
+void errorSet() {
+
   if(READ_VALUES[0]== 0 && READ_VALUES[1]== 0 && READ_VALUES[2]== 1 && READ_VALUES[3]== 0 && READ_VALUES[4]== 0){
       error = 0;
   }else if(READ_VALUES[0]== 0 && READ_VALUES[1]== 0 && READ_VALUES[2]== 1 && READ_VALUES[3]== 1 && READ_VALUES[4]== 0){
@@ -106,8 +110,12 @@ void errorSet(){
       error = -4;
   }else if(READ_VALUES[0]== 1 && READ_VALUES[1]== 1 && READ_VALUES[2]== 1 && READ_VALUES[3]== 0 && READ_VALUES[4]== 0){
       error = -5;                                                                                                          // upto here left side
-  }else{
-      
+  } else if (READ_VALUES[0] == 1 && READ_VALUES[1] == 1 &&
+             READ_VALUES[2] == 1 && READ_VALUES[3] == 1 &&
+             READ_VALUES[4] == 1) {
+    haltProgram();
+  } else {
+    
   }
 
   if(abs(error)> MAX_ERROR){
